@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Reservas de Mesas</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h1, h2 {
+      color: #333;
+      text-align: center;
+    }
+
+    form {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 300px;
+    }
+
+    input, select, button {
+      padding: 10px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      width: 90%;
+      max-width: 900px;
+      border-collapse: collapse;
+      background-color: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+    .acoes{
+      display: flex
+    }
+    .acoes form {
+      display: inline-block;
+      margin: 0 5px;
+    }
+
+    .acoes button {
+      background-color: #2196F3;
+    }
+
+    .acoes button:hover {
+      background-color: #0b7dda;
+    }
+
+    .acoes .delete-btn {
+      background-color: #f44336;
+    }
+
+    .acoes .delete-btn:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <h1>Reservas de Mesas</h1>
+
+  <form action="/reserva" method="POST">
+    <input name="nomeCliente" placeholder="Nome" required>
+    <input name="numeroMesa" placeholder="Mesa" type="number" min="1" max="20" required>
+    <input name="dataHora" type="datetime-local" required>
+    <input name="contatoCliente" placeholder="Telefone" required>
+    <button type="submit">Reservar</button>
+  </form>
+
+  <h2>Mapa de Reservas</h2>
+  <table>
+    <tr>
+      <th>Cliente</th>
+      <th>Mesa</th>
+      <th>Data e Hora</th>
+      <th>Status</th>
+      <th>Ações</th>
+    </tr>
+    <% reservas.forEach(r => { %>
+      <tr>
+        <td><%= r.nomeCliente %></td>
+        <td><%= r.numeroMesa %></td>
+        <td><%= new Date(r.dataHora).toLocaleString() %></td>
+        <td><%= r.status %></td>
+        <td class="acoes">
+          <form action="/reserva/<%= r._id %>/update" method="POST">
+            <select name="status">
+              <option value="Reservado" <%= r.status === 'Reservado' ? 'selected' : '' %>>Reservado</option>
+              <option value="Ocupado" <%= r.status === 'Ocupado' ? 'selected' : '' %>>Ocupado</option>
+              <option value="Disponivel" <%= r.status === 'Disponivel' ? 'selected' : '' %>>Disponível</option>
+            </select>
+            <button type="submit">Atualizar</button>
+          </form>
+          <form action="/reserva/<%= r._id %>/delete" method="POST">
+            <button class="delete-btn" type="submit">Deletar</button>
+          </form>
+        </td>
+      </tr>
+    <% }) %>
+  </table>
+
+  <% if (typeof erro !== 'undefined') { %>
+    <script>
+      alert("<%= erro %>");
+    </script>
+  <% } %>
+</body>
+</html>
